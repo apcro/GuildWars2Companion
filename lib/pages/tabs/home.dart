@@ -24,10 +24,18 @@ import 'package:guildwars2_companion/widgets/button.dart';
 import 'package:guildwars2_companion/widgets/header.dart';
 import 'package:guildwars2_companion/widgets/info_box.dart';
 import 'package:guildwars2_companion/widgets/list_view.dart';
+import 'package:reorderables/reorderables.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    List<Widget> _homepageSections = new List.empty(growable: true);
+    void _onReorder(int oldIndex, int newIndex) {
+      Widget row = _homepageSections.removeAt(oldIndex);
+      _homepageSections.insert(newIndex, row);
+    }
+
+
     return BlocBuilder<AccountBloc, AccountState>(
       buildWhen: (previous, current) {
         if (previous is AuthenticatedState && current is UnauthenticatedState) {
@@ -38,6 +46,17 @@ class HomePage extends StatelessWidget {
       },
       builder: (context, state) {
         if (state is AuthenticatedState) {
+
+          // first, generate reorderable rows
+          if (state.tokenInfo.permissions.contains('wallet'))
+            _homepageSections.add(_buildWallet(context));
+          _homepageSections.add(_buildWorldBosses(context, state.tokenInfo.permissions.contains('progression')));
+          _homepageSections.add(_buildEvents(context));
+          if (state.tokenInfo.permissions.contains('pvp'))
+            _homepageSections.add(_buildPvp(context));
+          _homepageSections.add(_buildRaids(context, state.tokenInfo.permissions.contains('progression')));
+          _homepageSections.add(_buildDungeons(context, state.tokenInfo.permissions.contains('progression')));
+
           return Scaffold(
             appBar: AppBar(
               backgroundColor: Theme.of(context).brightness == Brightness.light ? Colors.red : Theme.of(context).cardColor,
@@ -106,18 +125,15 @@ class HomePage extends StatelessWidget {
                     ],
                   ),
                 ),
+                // ReorderableColumn(
+                //   scrollController: ScrollController(),
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: _homepageSections,
+                //   onReorder: _onReorder,
+                // ),
                 Expanded(
                   child: CompanionListView(
-                    children: <Widget>[
-                      if (state.tokenInfo.permissions.contains('wallet'))
-                        _buildWallet(context),
-                      _buildWorldBosses(context, state.tokenInfo.permissions.contains('progression')),
-                      _buildEvents(context),
-                      if (state.tokenInfo.permissions.contains('pvp'))
-                        _buildPvp(context),
-                      _buildRaids(context, state.tokenInfo.permissions.contains('progression')),
-                      _buildDungeons(context, state.tokenInfo.permissions.contains('progression'))
-                    ],
+                    children: _homepageSections,
                   ),
                 ),
               ],
@@ -208,9 +224,11 @@ class HomePage extends StatelessWidget {
 
   Widget _buildWallet(BuildContext context) {
     return BlocBuilder<WalletBloc, WalletState>(
+      key: UniqueKey(),
       builder: (BuildContext context, WalletState state) {
         if (state is LoadedWalletState) {
           return CompanionButton(
+            key: UniqueKey(),
             color: Colors.orange,
             title: 'Wallet',
             onTap: () => Navigator.of(context).push(
@@ -285,6 +303,7 @@ class HomePage extends StatelessWidget {
 
         if (state is ErrorWalletState) {
           return CompanionButton(
+            key: UniqueKey(),
             color: Colors.orange,
             title: 'Wallet',
             onTap: () => Navigator.of(context).push(
@@ -310,6 +329,7 @@ class HomePage extends StatelessWidget {
 
   Widget _buildPvp(BuildContext context) {
     return CompanionButton(
+      key: UniqueKey(),
       color: Color(0xFF678A9E),
       title: 'PvP',
       onTap: () {
@@ -326,6 +346,7 @@ class HomePage extends StatelessWidget {
 
   Widget _buildWorldBosses(BuildContext context, bool includeProgress) {
     return CompanionButton(
+      key: UniqueKey(),
       color: Colors.deepPurple,
       title: 'World bosses',
       onTap: () {
@@ -340,6 +361,7 @@ class HomePage extends StatelessWidget {
 
   Widget _buildEvents(BuildContext context) {
     return CompanionButton(
+      key: UniqueKey(),
       color: Colors.green,
       title: 'Meta Events',
       onTap: () {
@@ -354,6 +376,7 @@ class HomePage extends StatelessWidget {
 
   Widget _buildDungeons(BuildContext context, bool includeProgress) {
     return CompanionButton(
+      key: UniqueKey(),
       color: Colors.deepOrange,
       title: 'Dungeons',
       onTap: () {
@@ -368,6 +391,7 @@ class HomePage extends StatelessWidget {
 
   Widget _buildRaids(BuildContext context, bool includeProgress) {
     return CompanionButton(
+      key: UniqueKey(),
       color: Colors.blue,
       title: 'Raids',
       onTap: () {

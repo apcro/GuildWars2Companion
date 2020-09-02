@@ -13,6 +13,7 @@ class CompanionButton extends StatelessWidget {
   final Color color;
   final Color foregroundColor;
   final String hero;
+  final Key key;
 
   final Widget Function(BuildContext, Widget) wrapper;
 
@@ -28,7 +29,8 @@ class CompanionButton extends StatelessWidget {
     this.trailing,
     this.loading = false,
     this.hero,
-    this.wrapper
+    this.wrapper,
+    this.key
   });
 
   @override

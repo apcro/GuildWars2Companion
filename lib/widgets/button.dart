@@ -40,7 +40,7 @@ class CompanionButton extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         color: Theme.of(context).brightness == Brightness.light ? color : Color(0xFF323232),
-        borderRadius: BorderRadius.circular(4.0),
+        borderRadius: BorderRadius.circular(12.0),
         boxShadow: [
           if (Theme.of(context).brightness == Brightness.light)
             BoxShadow(
@@ -51,7 +51,7 @@ class CompanionButton extends StatelessWidget {
       ),
       margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(4.0),
+        borderRadius: BorderRadius.circular(12.0),
         child: wrapper != null ? wrapper(context, _buildBody(context)) : _buildBody(context),
       ),
     );
@@ -105,8 +105,8 @@ class CompanionButton extends StatelessWidget {
         tag: hero,
         child: ClipRRect(
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(5.0),
-            bottomLeft: Radius.circular(5.0),
+            topLeft: Radius.circular(11.0),
+            bottomLeft: Radius.circular(11.0),
           ),
           child: leading,
         ),

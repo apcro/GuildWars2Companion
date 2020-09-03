@@ -24,7 +24,7 @@ import 'package:guildwars2_companion/widgets/button.dart';
 import 'package:guildwars2_companion/widgets/header.dart';
 import 'package:guildwars2_companion/widgets/info_box.dart';
 import 'package:guildwars2_companion/widgets/list_view.dart';
-import 'package:reorderables/reorderables.dart';
+import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
 
 class HomePage extends StatelessWidget {
   @override

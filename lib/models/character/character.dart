@@ -26,6 +26,7 @@ class Character {
   List<BuildTab> buildTabs;
   List<EquipmentTab> equipmentTabs;
 	List<Bags> bags;
+	List<Story> story;
 
 	Character({this.buildTabs, this.name, this.race, this.gender, this.profession, this.level, this.guild, this.age, this.created, this.deaths, this.crafting, this.title, this.bags});
 

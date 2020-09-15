@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guildwars2_companion/blocs/character/bloc.dart';
-import 'package:guildwars2_companion/models/character/backstory.dart';
 import 'package:guildwars2_companion/models/character/bags.dart';
 import 'package:guildwars2_companion/models/character/character.dart';
 import 'package:guildwars2_companion/models/items/inventory.dart';
-import 'package:guildwars2_companion/services/backstory.dart';
 import 'package:guildwars2_companion/widgets/accent.dart';
 import 'package:guildwars2_companion/widgets/appbar.dart';
 import 'package:guildwars2_companion/widgets/card.dart';
@@ -22,21 +20,16 @@ class BackstoryPage extends StatelessWidget {
     @required this.backstoryService,
     @required this.character
   });
+  BackstoryPage(this._character);
 
   @override
   Widget build(BuildContext context) {
-
-    Future<void> getBackstory() async {
-      List<Answer> backstory = await backstoryService.getBackstory(
-          character.name);
-    }
-
     return CompanionAccent(
       lightColor: Colors.indigo,
       child: Scaffold(
         appBar: CompanionAppBar(
           title: 'My Story',
-          color: Colors.lightBlue,
+          color: Colors.indigo,
           foregroundColor: Colors.white,
           elevation: 4.0,
         ),
@@ -44,17 +37,35 @@ class BackstoryPage extends StatelessWidget {
           listenWhen: (previous, current) => current is ErrorCharactersState,
           listener: (context, state) => Navigator.of(context).pop(),
           builder: (context, state) {
+            if (state is ErrorCharactersState) {
+              return Center(
+                child: CompanionError(
+                  title: 'the character',
+                  onTryAgain: () =>
+                      BlocProvider.of<CharacterBloc>(context).add(RefreshCharacterDetailsEvent()),
+                ),
+              );
+            }
 
+            if (state is LoadedCharactersState && state.detailsError) {
+              return Center(
+                child: CompanionError(
+                  title: 'the character items',
+                  onTryAgain: () =>
+                      BlocProvider.of<CharacterBloc>(context).add(LoadCharacterDetailsEvent()),
+                ),
+              );
+            }
 
             if (state is LoadedCharactersState && state.detailsLoaded) {
-              Character _character = state.characters.firstWhere((c) => c.name == character.name);
+              Character character = state.characters.firstWhere((c) => c.name == _character.name);
 
-              if (_character == null) {
+              if (character == null) {
                 return Center(
                   child: CompanionError(
                     title: 'the character',
                     onTryAgain: () =>
-                      BlocProvider.of<CharacterBloc>(context).add(RefreshCharacterDetailsEvent()),
+                        BlocProvider.of<CharacterBloc>(context).add(RefreshCharacterDetailsEvent()),
                   ),
                 );
               }
@@ -67,7 +78,7 @@ class BackstoryPage extends StatelessWidget {
                   await Future.delayed(Duration(milliseconds: 200), () {});
                 },
                 child: CompanionListView(
-                  children: backstory.map((b) => _buildStory(context)).toList(),
+                  children: character.bags.map((b) => _buildStory(context, b, character.story)).toList(),
                 ),
               );
             }
@@ -81,9 +92,10 @@ class BackstoryPage extends StatelessWidget {
     );
   }
 
-  Widget _buildStory(BuildContext context) {
+  Widget _buildStory(BuildContext context, Story story) {
     List<InventoryItem> inventory = bag.inventory.where((i) => i.id != -1 && i.itemInfo != null).toList();
     int usedSlots = inventory.length;
+    FontStyle fontStyle = (usedSlots == bag.size ? FontStyle.italic : FontStyle.normal);
     return CompanionCard(
       padding: EdgeInsets.zero,
       child: Column(
@@ -110,8 +122,8 @@ class BackstoryPage extends StatelessWidget {
                               .textTheme
                               .bodyText1
                               .copyWith(
-                            fontWeight: FontWeight.w500,
-                            fontStyle: fontStyle
+                              fontWeight: FontWeight.w500,
+                              fontStyle: fontStyle
                           )
                       ),
                     ),
@@ -121,7 +133,7 @@ class BackstoryPage extends StatelessWidget {
                 Text(
                   '$usedSlots/${bag.size}',
                   style: Theme.of(context).textTheme.bodyText1.copyWith(
-                    fontStyle: fontStyle
+                      fontStyle: fontStyle
                   ),
                 )
               ],
@@ -129,8 +141,8 @@ class BackstoryPage extends StatelessWidget {
           ),
           if (usedSlots > 0)
             Divider(
-              height: 2,
-              thickness: 1
+                height: 2,
+                thickness: 1
             ),
           if (usedSlots > 0)
             Container(

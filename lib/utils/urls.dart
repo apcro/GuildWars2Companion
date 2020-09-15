@@ -26,6 +26,9 @@ class Urls {
   static final String titlesUrl = '/titles?ids=all';
   static final String professionsUrl = '/professions?ids=all';
 
+  static final String backstoryUrl = "/characters/%s/backstory";
+  static final String answersUrl = '/backstory/answers?ids=';
+
   static final String itemsUrl = '/items?ids=';
   static final String skinsUrl = '/skins?ids=';
   static final String minisUrl = '/minis?ids=';

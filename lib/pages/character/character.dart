@@ -9,6 +9,7 @@ import 'package:guildwars2_companion/pages/character/build_selection.dart';
 import 'package:guildwars2_companion/pages/character/equipment.dart';
 import 'package:guildwars2_companion/pages/character/equipment_selection.dart';
 import 'package:guildwars2_companion/pages/character/inventory.dart';
+import 'package:guildwars2_companion/pages/character/backstory.dart';
 import 'package:guildwars2_companion/pages/general/build.dart';
 import 'package:guildwars2_companion/utils/guild_wars.dart';
 import 'package:guildwars2_companion/utils/guild_wars_icons.dart';
@@ -259,23 +260,41 @@ class CharacterPage extends StatelessWidget {
                     ),
                   if (state.tokenInfo.permissions.contains('inventories'))
                     CompanionButton(
-                      color: Colors.indigo,
-                      onTap: () {
-                        if (!characterState.detailsLoaded && !characterState.detailsLoading) {
-                          BlocProvider.of<CharacterBloc>(context).add(LoadCharacterDetailsEvent());
-                        }
+                    color: Colors.indigo,
+                    onTap: () {
+                      if (!characterState.detailsLoaded && !characterState.detailsLoading) {
+                        BlocProvider.of<CharacterBloc>(context).add(LoadCharacterDetailsEvent());
+                      }
 
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => InventoryPage(_character),
-                        ));
-                      },
-                      title: 'Inventory',
-                      leading: Icon(
-                        GuildWarsIcons.inventory,
-                        size: 48.0,
-                        color: Colors.white,
-                      ),
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => InventoryPage(_character),
+                      ));
+                    },
+                    title: 'Inventory',
+                    leading: Icon(
+                      GuildWarsIcons.inventory,
+                      size: 48.0,
+                      color: Colors.white,
                     ),
+                  ),
+                  CompanionButton(
+                    color: Colors.lightBlue,
+                    onTap: () {
+                      if (!characterState.detailsLoaded && !characterState.detailsLoading) {
+                        BlocProvider.of<CharacterBloc>(context).add(LoadCharacterDetailsEvent());
+                      }
+
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => BackstoryPage(_character),
+                      ));
+                    },
+                    title: 'My Story',
+                    leading: Icon(
+                      GuildWarsIcons.hero,
+                      size: 48.0,
+                      color: Colors.white,
+                    ),
+                  ),
                 ],
               ),
             ),

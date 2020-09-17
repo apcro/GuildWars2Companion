@@ -13,13 +13,8 @@ import 'package:guildwars2_companion/widgets/list_view.dart';
 
 class BackstoryPage extends StatelessWidget {
 
-  final Character character;
-  final BackstoryService backstoryService;
+  final Character _character;
 
-  BackstoryPage({
-    @required this.backstoryService,
-    @required this.character
-  });
   BackstoryPage(this._character);
 
   @override
@@ -78,7 +73,7 @@ class BackstoryPage extends StatelessWidget {
                   await Future.delayed(Duration(milliseconds: 200), () {});
                 },
                 child: CompanionListView(
-                  children: character.bags.map((b) => _buildStory(context, b, character.story)).toList(),
+                  children: character.bags.map((b) => _buildStory(context, character.backStory)).toList(),
                 ),
               );
             }
@@ -92,79 +87,14 @@ class BackstoryPage extends StatelessWidget {
     );
   }
 
-  Widget _buildStory(BuildContext context, Story story) {
-    List<InventoryItem> inventory = bag.inventory.where((i) => i.id != -1 && i.itemInfo != null).toList();
-    int usedSlots = inventory.length;
-    FontStyle fontStyle = (usedSlots == bag.size ? FontStyle.italic : FontStyle.normal);
+  Widget _buildStory(BuildContext context, List<String> story) {
     return CompanionCard(
       padding: EdgeInsets.zero,
       child: Column(
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.all(8.0),
-            child: Row(
-              children: <Widget>[
-                if (bag.itemInfo != null)
-                  CompanionItemBox(
-                    item: bag.itemInfo,
-                    hero: '$bagIndex ${bag.id}',
-                    size: 45.0,
-                    includeMargin: false,
-                  ),
-                if (bag.itemInfo != null)
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                          bag.itemInfo.name,
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .bodyText1
-                              .copyWith(
-                              fontWeight: FontWeight.w500,
-                              fontStyle: fontStyle
-                          )
-                      ),
-                    ),
-                  ),
-                if (bag.itemInfo == null)
-                  Spacer(),
-                Text(
-                  '$usedSlots/${bag.size}',
-                  style: Theme.of(context).textTheme.bodyText1.copyWith(
-                      fontStyle: fontStyle
-                  ),
-                )
-              ],
-            ),
-          ),
-          if (usedSlots > 0)
             Divider(
                 height: 2,
                 thickness: 1
-            ),
-          if (usedSlots > 0)
-            Container(
-              width: double.infinity,
-              margin: EdgeInsets.all(8.0),
-              child: Wrap(
-                spacing: 4.0,
-                runSpacing: 4.0,
-                children: inventory
-                    .where((i) => i.id != -1)
-                    .map((i) =>
-                    CompanionItemBox(
-                      item: i.itemInfo,
-                      skin: i.skinInfo,
-                      hero: '$bagIndex ${inventory.indexOf(i)} ${i.id}',
-                      upgradesInfo: i.upgradesInfo,
-                      infusionsInfo: i.infusionsInfo,
-                      quantity: i.charges != null ? i.charges : i.count,
-                      includeMargin: false,
-                    ))
-                    .toList(),
-              ),
             ),
         ],
       ),

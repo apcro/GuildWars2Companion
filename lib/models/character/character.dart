@@ -26,7 +26,7 @@ class Character {
   List<BuildTab> buildTabs;
   List<EquipmentTab> equipmentTabs;
 	List<Bags> bags;
-	List<Story> story;
+	List<String> backStory;
 
 	Character({this.buildTabs, this.name, this.race, this.gender, this.profession, this.level, this.guild, this.age, this.created, this.deaths, this.crafting, this.title, this.bags});
 
@@ -60,6 +60,9 @@ class Character {
 		if (json['bags'] != null) {
 			bags = new List<Bags>();
 			json['bags'].where((b) => b != null).forEach((v) { bags.add(new Bags.fromJson(v)); });
+		}
+		if (json['backstory'] != null) {
+			this.backStory = json['backstory'].cast<String>();
 		}
 	}
 

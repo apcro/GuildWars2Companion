@@ -7,6 +7,7 @@ import '../utils/urls.dart';
 
 class CharacterService {
   List<AccountTitle> _titles;
+  List<String> _backStory;
 
   Dio dio;
 
@@ -16,12 +17,12 @@ class CharacterService {
 
   Future<List<Character>> getCharacters() async {
     final response = await dio.get(
-      Urls.charactersUrl,
-      options: Options(
-        headers: {
-          'X-Schema-Version': '2020-07-01T00:00:00Z'
-        }
-      )
+        Urls.charactersUrl,
+        options: Options(
+            headers: {
+              'X-Schema-Version': '2020-07-01T00:00:00Z'
+            }
+        )
     );
 
     if (response.statusCode == 200) {
@@ -58,4 +59,21 @@ class CharacterService {
 
     throw Exception();
   }
+
+  Future<List<String>> getBackstory() async {
+    final response = await dio.get(Urls.backstoryUrl);
+
+    if (_backStory != null && _backStory.isNotEmpty) {
+      return _backStory;
+    }
+
+    if (response.statusCode == 200) {
+      List backstory = response.data;
+      _backStory = backstory.cast<String>();
+      return _backStory;
+    }
+
+    throw Exception();
+  }
+
 }
